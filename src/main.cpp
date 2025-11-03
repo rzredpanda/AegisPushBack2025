@@ -22,7 +22,8 @@ ez::Drive chassis(
 
 pros::Motor intake(19);
 pros::Motor top(18);
-pros::adi::DigitalOut matchloader('A');
+pros::adi::DigitalOut matchloader('H');
+pros::adi::DigitalOut park('D');
 
 // Uncomment the trackers you're using here!
 // - `8` and `9` are smart ports (making these negative will reverse the sensor)
