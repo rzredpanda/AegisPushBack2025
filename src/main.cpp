@@ -14,9 +14,16 @@ ez::Drive chassis(
     17,      // IMU Port
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     450);   // Wheel RPM = cartridge * (motor gear / wheel gear)
-//left ports are 11,12,13 +-+ pros flip
+
+    //left ports are 11,12,13 +-+ pros flip
 //right ports are 14,15,16 -+- probably need to flip
 // IMU port is 17
+//intake 20
+
+pros::Motor intake(19);
+pros::Motor top(18);
+pros::adi::DigitalOut matchloader('A');
+
 // Uncomment the trackers you're using here!
 // - `8` and `9` are smart ports (making these negative will reverse the sensor)
 //  - you should get positive values on the encoders going FORWARD and RIGHT
@@ -24,7 +31,7 @@ ez::Drive chassis(
 // - `4.0` is the distance from the center of the wheel to the center of the robot
 ez::tracking_wheel horiz_tracker(9, 2.75, 4.0);  // This tracking wheel is perpendicular to the drive wheels
 ez::tracking_wheel vert_tracker(8, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
-
+//intake is 16
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -258,6 +265,25 @@ void opcontrol() {
 
     // . . .
     // Put more user control code here!
+    if (master.get_digital(DIGITAL_R2)) {
+      intake.move_velocity(200);  // 200 RPM forward
+    } else if (master.get_digital(DIGITAL_R1)) {
+      intake.move_velocity(-200); // 200 RPM reverse
+    } else {
+      intake.move_velocity(0);    // stop
+    }
+    if (master.get_digital(DIGITAL_L1)) {
+      top.move_velocity(200);  // 200 RPM forward
+    } else if (master.get_digital(DIGITAL_L2)) {
+      top.move_velocity(-200); // 200 RPM reverse
+    } else {
+      top.move_velocity(0);    // stop
+    }
+    if (master.get_digital(DIGITAL_A)) {
+      matchloader.set_value(true);
+    } else {
+      matchloader.set_value(false);
+    }
     // . . .
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
