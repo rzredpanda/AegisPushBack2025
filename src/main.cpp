@@ -22,6 +22,7 @@ ez::Drive chassis(
 
 pros::Motor intake(19);
 pros::Motor top(18);
+pros::Motor hood(10);
 pros::adi::DigitalOut matchloader('H');
 pros::adi::DigitalOut park('D');
 
