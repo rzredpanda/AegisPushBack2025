@@ -128,6 +128,7 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
+  chassis.initialize();
   chassis.pid_targets_reset();                // Resets PID targets to 0
   chassis.drive_imu_reset();                  // Reset gyro position to 0
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
