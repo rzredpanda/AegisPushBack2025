@@ -23,8 +23,10 @@ ez::Drive chassis(
 pros::Motor intake(19);
 pros::Motor top(18);
 pros::Motor hood(10);
-pros::adi::DigitalOut matchloader('H');
-pros::adi::DigitalOut park('D');
+//pros::adi::Pneumatics matchloader('H',);
+//pros::adi::DigitalOut park('D');
+pros::adi::Pneumatics matchloaders('h', false);
+pros::adi::Pneumatics park('d', false);
 
 // Uncomment the trackers you're using here!
 // - `8` and `9` are smart ports (making these negative will reverse the sensor)
@@ -267,26 +269,53 @@ void opcontrol() {
 
     // . . .
     // Put more user control code here!
+
+
+    //long side
     if (master.get_digital(DIGITAL_R2)) {
-      intake.move_velocity(200);  // 200 RPM forward
+      intake.move_velocity(100);  // 200 RPM forward
+      top.move_velocity(-250);
+      hood.move_velocity(-300);
     } else if (master.get_digital(DIGITAL_R1)) {
-      intake.move_velocity(-200); // 200 RPM reverse
-    } else {
-      intake.move_velocity(0);    // stop
+      intake.move_velocity(-100);  // 200 RPM forward
+      top.move_velocity(250);
+      hood.move_velocity(300);// 200 RPM reverse
     }
-    if (master.get_digital(DIGITAL_L1)) {
-      top.move_velocity(200);  // 200 RPM forward
-    } else if (master.get_digital(DIGITAL_L2)) {
-      top.move_velocity(-200); // 200 RPM reverse
-    } else {
-      top.move_velocity(0);    // stop
+    //short side
+    else if (master.get_digital(DIGITAL_L2)) {
+      intake.move_velocity(250);  // 200 RPM forward
+      hood.move_velocity(200);
+    } else if (master.get_digital(DIGITAL_L1)) {
+      intake.move_velocity(-250);  // 200 RPM forward
+      hood.move_velocity(-200);
+      // 200 RPM reverse
+    } 
+    else{
+      intake.move_velocity(0);  // 200 RPM forward
+      top.move_velocity(0);
+      hood.move_velocity(0);  // stop
     }
+
+
+
+
+
     if (master.get_digital(DIGITAL_A)) {
-      matchloader.set_value(true);
-    } else {
-      matchloader.set_value(false);
-    }
-    // . . .
+      matchloaders.set_value(1);
+  } 
+else if (master.get_digital(DIGITAL_B)) {
+  matchloaders.set_value(0);
+} 
+    //else {
+      //intake.move_velocity(0);  // 200 RPM forward
+      //top.move_velocity(0);
+      //hood.move_velocity(0);  // stop
+    //}
+
+
+
+
+
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
