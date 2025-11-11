@@ -23,6 +23,7 @@ ez::Drive chassis(
 pros::Motor intake(19);
 pros::Motor top(18);
 pros::Motor hood(10);
+pros::MotorGroup long_goal({19,-18,-10});
 //pros::adi::Pneumatics matchloader('H',);
 //pros::adi::DigitalOut park('D');
 pros::adi::Pneumatics matchloaders('h', false);
@@ -71,6 +72,7 @@ void initialize() {
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   // Autonomous Selector using LLEMU
+  /*
   ez::as::auton_selector.autons_add({
       {"Drive\n\nDrive forward and come back", drive_example},
       {"Turn\n\nTurn 3 times.", turn_example},
@@ -87,7 +89,7 @@ void initialize() {
       {"Boomerang Pure Pursuit\n\nGo to (0, 24, 45) on the way to (24, 24) then come back to (0, 0, 0)", odom_boomerang_injected_pure_pursuit_example},
       {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", measure_offsets},
   });
-
+  */
   // Initialize chassis and auton selector
   chassis.initialize();
   ez::as::initialize();
@@ -147,13 +149,43 @@ void autonomous() {
   You can do cool curved motions, but you have to give your robot the best chance
   to be consistent
   */
+  angular_PID_test();
+/*
+  printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
+  chassis.pid_turn_set(90_deg, 90);
+  printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
+*/
+  /*
   matchloaders.set_value(0);
-  chassis.pid_drive_set(24_in, 110, true);
+  chassis.pid_drive_set(20_in, 80, true);
+  pros::delay(500);
+  chassis.pid_drive_set(2_in, 80, true);
+  pros::delay(500);
+  chassis.pid_drive_set(-2_in, 80, true);
+  chassis.pid_drive_set(2_in, 80, true);
   chassis.pid_wait();
+  long_goal.move_velocity(300);
+  pros::delay(400);
+  long_goal.move_velocity(0);
+  pros::delay(500);
+  chassis.pid_drive_set(-30_in, 50, true);
+  */
   
   //ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
 
+void angular_PID_test() {
+    //imu.set_rotation(0);
+    pros::lcd::print(1, "%f X-coordinate:", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
+    //pros::lcd::print(2, "%f Y-coordinate:", chassis.odom_y_get());
+    //pros::lcd::print(3, "%f Heading", chassis.odom_theta_get());
+
+    chassis.pid_turn_set(90_deg, 90);
+
+    pros::lcd::print(4, "%f X-coordinate:", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
+    //pros::lcd::print(5, "%f Y-coordinate:", chassis.getPose().y);
+    //pros::lcd::print(6, "%f Heading", chassis.getPose().theta);
+}
 /**
  * Simplifies printing tracker values to the brain screen
  */
@@ -278,11 +310,11 @@ void opcontrol() {
 
     //long side
     if (master.get_digital(DIGITAL_R2)) {
-      intake.move_velocity(100);  // 200 RPM forward
+      intake.move_velocity(160);  // 200 RPM forward
       top.move_velocity(-250);
       hood.move_velocity(-300);
     } else if (master.get_digital(DIGITAL_R1)) {
-      intake.move_velocity(-100);  // 200 RPM forward
+      intake.move_velocity(-160);  // 200 RPM forward
       top.move_velocity(250);
       hood.move_velocity(300);// 200 RPM reverse
     }
