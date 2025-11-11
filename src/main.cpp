@@ -147,8 +147,11 @@ void autonomous() {
   You can do cool curved motions, but you have to give your robot the best chance
   to be consistent
   */
-
-  ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
+  matchloaders.set_value(0);
+  chassis.pid_drive_set(24_in, 110, true);
+  chassis.pid_wait();
+  
+  //ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
 
 /**
@@ -254,6 +257,7 @@ void ez_template_extras() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
 void opcontrol() {
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
