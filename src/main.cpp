@@ -150,11 +150,15 @@ void autonomous() {
   to be consistent
   */
   angular_PID_test();
+  ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
+                     "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
+                     "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
+               1);
 /*
   printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
   chassis.pid_turn_set(90_deg, 90);
   printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
-*/
+  */
   /*
   matchloaders.set_value(0);
   chassis.pid_drive_set(20_in, 80, true);
@@ -173,18 +177,41 @@ void autonomous() {
   
   //ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
+/*
+void ez_screen_task() {
+  while (true) {
+    // Only run this when not connected to a competition switch
+    if (!pros::competition::is_connected()) {
+      // Blank page for odom debugging
+      if (chassis.odom_enabled() && !chassis.pid_tuner_enabled()) {
+        // If we're on the first blank page...
+        if (ez::as::page_blank_is_on(0)) {
+          // Display X, Y, and Theta
+          ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
+                               "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
+                               "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
+                           1);  // Don't override the top Page line
+        }
+      }
+    }
+
+    // Remove all blank pages when connected to a comp switch
+    else {
+      if (ez::as::page_blank_amount() > 0)
+        ez::as::page_blank_remove_all();
+    }
+
+    pros::delay(ez::util::DELAY_TIME);
+  }
+}
+pros::Task ezScreenTask(ez_screen_task);
+*/
+
 
 void angular_PID_test() {
     //imu.set_rotation(0);
-    pros::lcd::print(1, "%f X-coordinate:", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
-    //pros::lcd::print(2, "%f Y-coordinate:", chassis.odom_y_get());
-    //pros::lcd::print(3, "%f Heading", chassis.odom_theta_get());
-
     chassis.pid_turn_set(90_deg, 90);
-
-    pros::lcd::print(4, "%f X-coordinate:", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
-    //pros::lcd::print(5, "%f Y-coordinate:", chassis.getPose().y);
-    //pros::lcd::print(6, "%f Heading", chassis.getPose().theta);
+    
 }
 /**
  * Simplifies printing tracker values to the brain screen

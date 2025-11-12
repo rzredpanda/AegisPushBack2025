@@ -71,8 +71,10 @@ using namespace okapi::literals;
 #ifdef __cplusplus
 extern "C" {
 #endif
-void angular_PID_test(void);
 
+//NEW
+void angular_PID_test(void);
+void ez_screen_task(void);
 
 //HERE
 void autonomous(void);
