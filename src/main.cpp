@@ -12,7 +12,7 @@ ez::Drive chassis(
     {14, -15, 16},  // Right Chassis Ports (negative port will reverse it!)
 
     17,      // IMU Port
-    3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
+    3.25,  // Wheel Diameter (RememberP, 4" wheels without screw holes are actually 4.125!)
     450);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
     //left ports are 11,12,13 +-+ pros flip
@@ -23,6 +23,7 @@ ez::Drive chassis(
 pros::Motor intake(19);
 pros::Motor top(18);
 pros::Motor hood(10);
+
 //pros::adi::Pneumatics matchloader('H',);
 //pros::adi::DigitalOut park('D');
 pros::adi::Pneumatics matchloaders('h', false);
@@ -127,6 +128,12 @@ void competition_initialize() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+ int _intake() {
+  intake.move_velocity(100);
+  top.move_velocity(-250);
+  hood.move_velocity(-300);
+}
+
 void autonomous() {
   chassis.initialize();
   chassis.pid_targets_reset();                // Resets PID targets to 0
@@ -135,7 +142,27 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait();
+
+  _intake(100);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-48_in, 110);
+  chassis.pid_wait();
+  _intake(-100);
+
+  matchloaders.set_value(0); 
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait();
+
+  chassis.pid_swing_set(ez::RIGHT_SWING, 45_deg, 90, ez::cw);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait();
+
   /*
+
   Odometry and Pure Pursuit are not magic
 
   It is possible to get perfectly consistent results without tracking wheels,
@@ -150,6 +177,7 @@ void autonomous() {
 
   ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
+
 
 /**
  * Simplifies printing tracker values to the brain screen
@@ -241,6 +269,9 @@ void ez_template_extras() {
   }
 }
 
+
+
+
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -254,6 +285,7 @@ void ez_template_extras() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
 void opcontrol() {
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
