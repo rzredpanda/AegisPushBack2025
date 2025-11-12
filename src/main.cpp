@@ -128,10 +128,15 @@ void competition_initialize() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
- int _intake() {
-  intake.move_velocity(100);
-  top.move_velocity(-250);
-  hood.move_velocity(-300);
+ void _intake(int direction) {
+  intake.move_velocity(100 * direction);
+  top.move_velocity(-250 * direction);
+  hood.move_velocity(-300 * direction);
+}
+
+void short_outtake() {
+  intake.move_velocity(-250);
+  hood.move_velocity(-200);
 }
 
 void autonomous() {
@@ -145,21 +150,37 @@ void autonomous() {
   chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait();
 
-  _intake(100);
+  _intake(1); //intake
   chassis.pid_wait();
-  chassis.pid_drive_set(-48_in, 110);
+  chassis.pid_drive_set(-48_in, 90);
   chassis.pid_wait();
-  _intake(-100);
+  _intake(-1); //outtake
 
   matchloaders.set_value(0); 
   chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait();
 
-  chassis.pid_swing_set(ez::RIGHT_SWING, 45_deg, 90, ez::cw);
+  chassis.pid_swing_set(ez::RIGHT_SWING, 135_deg, 90);
   chassis.pid_wait();
 
   chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait();
+
+  _intake(1);
+  chassis.pid_wait();
+  chassis.pid_swing_set(ez::RIGHT_SWING, 180_deg, 90);
+  chassis.pid_drive_set(-24_in, 110);
+  chassis.pid_wait();
+  short_outtake();
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_swing_set(ez::RIGHT_SWING, 45_deg, 90);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait();
+
 
   /*
 
@@ -336,9 +357,9 @@ void opcontrol() {
     if (master.get_digital(DIGITAL_A)) {
       matchloaders.set_value(1);
   } 
-else if (master.get_digital(DIGITAL_B)) {
-  matchloaders.set_value(0);
-} 
+    else if (master.get_digital(DIGITAL_B)) {
+      matchloaders.set_value(0);
+  } 
     //else {
       //intake.move_velocity(0);  // 200 RPM forward
       //top.move_velocity(0);
