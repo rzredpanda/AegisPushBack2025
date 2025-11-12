@@ -128,7 +128,7 @@ void competition_initialize() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
- void _intake(int direction) {
+void _intake(int direction) {
   intake.move_velocity(100 * direction);
   top.move_velocity(-250 * direction);
   hood.move_velocity(-300 * direction);
@@ -175,11 +175,15 @@ void autonomous() {
   chassis.pid_wait();
 
   chassis.pid_drive_set(24_in, 110);
-  chassis.pid_swing_set(ez::RIGHT_SWING, 45_deg, 90);
+  chassis.pid_swing_set(ez::RIGHT_SWING, 135_deg, 90);
   chassis.pid_wait();
 
-  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_drive_set(48_in, 110);
   chassis.pid_wait();
+
+  chassis.pid_swing_set(ez::LEFT_SWING, 45_deg, 90);
+  chassis.pid_wait();
+
 
 
   /*
@@ -289,8 +293,6 @@ void ez_template_extras() {
       chassis.pid_tuner_disable();
   }
 }
-
-
 
 
 /**
