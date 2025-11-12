@@ -7,7 +7,7 @@ Collaborators:
 - Jeffrey Wang (@DefineOriginality)
 - Dana Yi
 - Milton Tseng (@miltont60)
-- Hilly Choe
+- Hilly Choe (@800026736-oss)
 - Aryan Talwar
 - Ellsa Ye
 - Minjun Gal
