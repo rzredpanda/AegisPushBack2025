@@ -147,6 +147,17 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
+  chassis.pid_swing_set(ez::RIGHT_SWING, 90_deg, 90);
+  chassis.pid_wait();
+  chassis.pid_drive_set(24_in*1.5, 110);
+  chassis.pid_wait();
+  chassis.pid_swing_set(ez::RIGHT_SWING, 90_deg, 90);
+  chassis.pid_wait();
+  
+  // The above code should, in theory, move the bot
+  // from a position touching the goal to the original intended start
+  // of the auton
+
   chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait();
 
