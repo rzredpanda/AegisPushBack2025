@@ -71,6 +71,7 @@ using namespace okapi::literals;
 #ifdef __cplusplus
 extern "C" {
 #endif
+void short_outtake(void);
 void _intake(void);
 void autonomous(void);
 void initialize(void);
