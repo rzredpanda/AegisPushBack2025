@@ -354,6 +354,13 @@ void opcontrol() {
       hood.move_velocity(-200);
       // 200 RPM reverse
     } 
+    else if (master.get_digital(DIGITAL_UP)) {
+      park.set_value(1);
+    } 
+    else if (master.get_digital(DIGITAL_DOWN)) {
+      park.set_value(0);
+
+    }
     else{
       intake.move_velocity(0);  // 200 RPM forward
       top.move_velocity(0);
