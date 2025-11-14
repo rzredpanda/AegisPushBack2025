@@ -318,12 +318,29 @@ void ez_template_extras() {
  */
 
 void opcontrol() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /**/
   // This is preference to what you like to drive on
-  chassis.drive_brake_set(MOTOR_BRAKE_COAST);
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
 
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
+
+
 
     //chassis.opcontrol_tank();  // Tank control
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
@@ -368,26 +385,19 @@ void opcontrol() {
     }
 
 
-
-
-
     if (master.get_digital(DIGITAL_A)) {
       matchloaders.set_value(1);
   } 
 else if (master.get_digital(DIGITAL_B)) {
   matchloaders.set_value(0);
 } 
-    //else {
-      //intake.move_velocity(0);  // 200 RPM forward
-      //top.move_velocity(0);
-      //hood.move_velocity(0);  // stop
-    //}
-
-
-
-
-
-
+   
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
+
+
+
+
+
+
 }
