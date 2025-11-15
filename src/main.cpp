@@ -137,11 +137,64 @@ void autonomous() {
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
-  chassis.pid_drive_set(24_in, 100, true);
+  
+  chassis.pid_drive_set(2_in, 120, true);
+  pros::delay(500);
   chassis.pid_wait();
   chassis.pid_turn_set(90_deg, 90);
+  pros::delay(500);
+  chassis.pid_drive_set(48_in, 50, true);
+  pros::delay(500);
   chassis.pid_wait();
-  chassis.pid_drive_set(24_in, 100, true);
+  chassis.pid_turn_set(180_deg, 90);
+  pros::delay(500);
+  chassis.pid_wait();
+  chassis.pid_drive_set(16_in, 50, true);
+  chassis.pid_wait();
+  pros::delay(500);
+  intake.move_velocity(160);  // 200 RPM forward
+  //top.move_velocity(-250);
+  hood.move_velocity(-300);
+pros::delay(280);
+chassis.pid_wait();
+  chassis.pid_drive_set(-48_in, 50, true);
+  chassis.pid_wait();
+  pros::delay(1000);
+  intake.move_velocity(160);  // 200 RPM forward
+  top.move_velocity(-250);
+  hood.move_velocity(-300);
+  pros::delay(800);
+
+
+
+
+  /*
+  //park auton
+  chassis.pid_wait();
+  park.set_value(0);
+  chassis.pid_wait();
+  matchloaders.set_value(0);
+  chassis.pid_wait();
+  //matchloaders.set_value(1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-11_in, 120, true);
+  chassis.pid_wait();
+  pros::delay(200);
+  intake.move_velocity(-50);
+  pros::delay(350);
+  intake.move_velocity(0);
+  chassis.pid_wait();
+  matchloaders.set_value(1);
+  pros::delay(500);
+  park.set_value(1);
+  chassis.pid_wait();
+  chassis.pid_wait();
+
+
+  */
+  
+
+  
   /*
   Odometry and Pure Pursuit are not magic
 
