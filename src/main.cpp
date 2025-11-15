@@ -165,6 +165,19 @@ chassis.pid_wait();
   hood.move_velocity(-300);
   pros::delay(800);
 
+  /*
+  //back and forth between long goal and loader (made by Hilly, not sure if it works)
+  matchloaders.set_value(0);
+  chassis.pid_wait();
+  chassis.pid_drive_set(24_in, 50, true);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_turn_set(45_deg, 90);
+  pros::delay(500);
+  chassis.pid_wait();
+  chassis.pid_drive_set(24_in, 50, true);
+  chassis.pid_wait();
+  pros::delay(500);
 
 
 
