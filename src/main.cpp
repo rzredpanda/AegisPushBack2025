@@ -28,6 +28,7 @@ pros::MotorGroup long_goal({19,-18,-10});
 //pros::adi::DigitalOut park('D');
 pros::adi::Pneumatics matchloaders('h', false);
 pros::adi::Pneumatics park('d', false);
+pros::adi::Pneumatics wings('a', false);
 
 // Uncomment the trackers you're using here!
 // - `8` and `9` are smart ports (making these negative will reverse the sensor)
@@ -136,7 +137,11 @@ void autonomous() {
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
-
+  chassis.pid_drive_set(24_in, 100, true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90_deg, 90);
+  chassis.pid_wait();
+  chassis.pid_drive_set(24_in, 100, true);
   /*
   Odometry and Pure Pursuit are not magic
 
@@ -149,11 +154,7 @@ void autonomous() {
   You can do cool curved motions, but you have to give your robot the best chance
   to be consistent
   */
-  angular_PID_test();
-  ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
-                     "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
-                     "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
-               1);
+  //angular_PID_test();
 /*
   printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
   chassis.pid_turn_set(90_deg, 90);
@@ -210,6 +211,8 @@ pros::Task ezScreenTask(ez_screen_task);
 
 void angular_PID_test() {
     //imu.set_rotation(0);
+    chassis.drive_imu_reset();
+    chassis.pid_drive_set(10_in, 100, true);
     chassis.pid_turn_set(90_deg, 90);
     
 }
@@ -376,6 +379,13 @@ void opcontrol() {
     } 
     else if (master.get_digital(DIGITAL_DOWN)) {
       park.set_value(0);
+
+    }
+    else if (master.get_digital(DIGITAL_LEFT)) {
+      wings.set_value(1);
+    } 
+    else if (master.get_digital(DIGITAL_RIGHT)) {
+      wings.set_value(0);
 
     }
     else{
