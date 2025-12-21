@@ -8,10 +8,10 @@
 // Chassis constructor
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
-    {-11, 12, -13},     // Left Chassis Ports (negative port will reverse it!)
-    {14, -15, 16},  // Right Chassis Ports (negative port will reverse it!)
+    {-1, 2, -3},     // Left Chassis Ports (negative port will reverse it!)
+    {8, -9, 10},  // Right Chassis Ports (negative port will reverse it!)
 
-    17,      // IMU Port
+    6,      // IMU Port
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     450);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
@@ -20,10 +20,10 @@ ez::Drive chassis(
 // IMU port is 17
 //intake 20
 //llll
-pros::Motor intake(19);
-pros::Motor top(18);
-pros::Motor hood(10);
-pros::MotorGroup long_goal({19,-18,-10});
+pros::Motor intake(20);
+pros::Motor lever(11);
+//pros::Motor hood(10);
+//pros::MotorGroup long_goal({19,-18,-10});
 //pros::adi::Pneumatics matchloader('H',);
 //pros::adi::DigitalOut park('D');
 pros::adi::Pneumatics matchloaders('h', false);
@@ -137,47 +137,7 @@ void autonomous() {
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
-  
-  chassis.pid_drive_set(2_in, 120, true);
-  pros::delay(500);
-  chassis.pid_wait();
-  chassis.pid_turn_set(90_deg, 90);
-  pros::delay(500);
-  chassis.pid_drive_set(48_in, 50, true);
-  pros::delay(500);
-  chassis.pid_wait();
-  chassis.pid_turn_set(180_deg, 90);
-  pros::delay(500);
-  chassis.pid_wait();
-  chassis.pid_drive_set(16_in, 50, true);
-  chassis.pid_wait();
-  pros::delay(500);
-  intake.move_velocity(160);  // 200 RPM forward
-  //top.move_velocity(-250);
-  hood.move_velocity(-300);
-pros::delay(280);
-chassis.pid_wait();
-  chassis.pid_drive_set(-48_in, 50, true);
-  chassis.pid_wait();
-  pros::delay(1000);
-  intake.move_velocity(160);  // 200 RPM forward
-  top.move_velocity(-250);
-  hood.move_velocity(-300);
-  pros::delay(800);
 
-  /*
-  //back and forth between long goal and loader (made by Hilly, not sure if it works)
-  matchloaders.set_value(0);
-  chassis.pid_wait();
-  chassis.pid_drive_set(24_in, 50, true);
-  chassis.pid_wait();
-  pros::delay(500);
-  chassis.pid_turn_set(45_deg, 90);
-  pros::delay(500);
-  chassis.pid_wait();
-  chassis.pid_drive_set(24_in, 50, true);
-  chassis.pid_wait();
-  pros::delay(500);
 
 
 
@@ -421,52 +381,21 @@ void opcontrol() {
     // Put more user control code here!
 
 
-    //long side
     if (master.get_digital(DIGITAL_R2)) {
-      intake.move_velocity(160);  // 200 RPM forward
-      top.move_velocity(-250);
-      hood.move_velocity(-300);
-    } else if (master.get_digital(DIGITAL_R1)) {
-      intake.move_velocity(-160);  // 200 RPM forward
-      top.move_velocity(250);
-      hood.move_velocity(300);// 200 RPM reverse
+      intake.move_velocity(200);  // 200 RPM forward
+    } 
+    else if (master.get_digital(DIGITAL_R1)) {
+      intake.move_velocity(-200);  // 200 RPM backward
     }
-    //short side
     else if (master.get_digital(DIGITAL_L2)) {
-      intake.move_velocity(250);  // 200 RPM forward
-      hood.move_velocity(200);
-    } else if (master.get_digital(DIGITAL_L1)) {
-      intake.move_velocity(-250);  // 200 RPM forward
-      hood.move_velocity(-200);
-      // 200 RPM reverse
+      lever.move_velocity(-10);  // Move lever up
     } 
-    else if (master.get_digital(DIGITAL_UP)) {
-      park.set_value(1);
+    else if (master.get_digital(DIGITAL_L1)) {
+      lever.move_velocity(10);  // Move lever down
     } 
-    else if (master.get_digital(DIGITAL_DOWN)) {
-      park.set_value(0);
-
+    else {
+      intake.move_velocity(0);  // Stop intake
     }
-    else if (master.get_digital(DIGITAL_LEFT)) {
-      wings.set_value(1);
-    } 
-    else if (master.get_digital(DIGITAL_RIGHT)) {
-      wings.set_value(0);
-
-    }
-    else{
-      intake.move_velocity(0);  // 200 RPM forward
-      top.move_velocity(0);
-      hood.move_velocity(0);  // stop
-    }
-
-
-    if (master.get_digital(DIGITAL_A)) {
-      matchloaders.set_value(1);
-  } 
-else if (master.get_digital(DIGITAL_B)) {
-  matchloaders.set_value(0);
-} 
    
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
