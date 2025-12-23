@@ -26,9 +26,9 @@ pros::Motor lever(11);
 //pros::MotorGroup long_goal({19,-18,-10});
 //pros::adi::Pneumatics matchloader('H',);
 //pros::adi::DigitalOut park('D');
-pros::adi::Pneumatics matchloaders('h', false);
-pros::adi::Pneumatics park('d', false);
-pros::adi::Pneumatics wings('a', false);
+pros::adi::Pneumatics matchloaders('c', false);
+pros::adi::Pneumatics park('b', false);
+pros::adi::Pneumatics wings('d', false);
 
 // Uncomment the trackers you're using here!
 // - `8` and `9` are smart ports (making these negative will reverse the sensor)
@@ -388,13 +388,32 @@ void opcontrol() {
       intake.move_velocity(-200);  // 200 RPM backward
     }
     else if (master.get_digital(DIGITAL_L2)) {
-      lever.move_velocity(-10);  // Move lever up
+      lever.move_velocity(-150);  // Move lever up
     } 
     else if (master.get_digital(DIGITAL_L1)) {
-      lever.move_velocity(10);  // Move lever down
-    } 
+      lever.move_velocity(150);  // Move lever down
+    }
+    else if (master.get_digital(DIGITAL_DOWN)) {
+      park.set_value(1);
+    }
+    else if (master.get_digital(DIGITAL_LEFT)) {
+      park.set_value(0);
+    }
+    else if (master.get_digital(DIGITAL_UP)) {
+      wings.set_value(1);
+    }
+    else if (master.get_digital(DIGITAL_RIGHT)) {
+      wings.set_value(0);
+    }
+    else if (master.get_digital(DIGITAL_B)) {
+      matchloaders.set_value(1);    
+    }
+    else if (master.get_digital(DIGITAL_A)) {
+      matchloaders.set_value(0);
+    }
     else {
       intake.move_velocity(0);  // Stop intake
+      lever.move_velocity(0);   // Stop lever
     }
    
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
