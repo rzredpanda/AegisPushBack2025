@@ -388,10 +388,10 @@ void opcontrol() {
       intake.move_velocity(-200);  // 200 RPM backward
     }
     else if (master.get_digital(DIGITAL_L2)) {
-      lever.move_velocity(-200);  // Move lever up
+      lever.move_velocity(-150);  // Move lever up
     } 
     else if (master.get_digital(DIGITAL_L1)) {
-      lever.move_velocity(200);  // Move lever down
+      lever.move_velocity(150);  // Move lever down
     }
     else if (master.get_digital(DIGITAL_DOWN)) {
       park.set_value(1);
@@ -418,4 +418,10 @@ void opcontrol() {
    
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
+
+
+
+
+
+
 }
