@@ -381,39 +381,37 @@ void opcontrol() {
     // Put more user control code here!
 
 
+    // Intake control (hold for forward/backward, 0 if neither)
     if (master.get_digital(DIGITAL_R2)) {
-      intake.move_velocity(200);  // 200 RPM forward
-    } 
-    else if (master.get_digital(DIGITAL_R1)) {
-      intake.move_velocity(-200);  // 200 RPM backward
+      intake.move_velocity(200);
+    } else if (master.get_digital(DIGITAL_R1)) {
+      intake.move_velocity(-200);
+    } else {
+      intake.move_velocity(0);
     }
-    else if (master.get_digital(DIGITAL_L2)) {
-      lever.move_velocity(-150);  // Move lever up
-    } 
-    else if (master.get_digital(DIGITAL_L1)) {
-      lever.move_velocity(150);  // Move lever down
+
+    // Lever control (hold for up/down, 0 if neither)
+    if (master.get_digital(DIGITAL_L2)) {
+      lever.move_velocity(-150);
+    } else if (master.get_digital(DIGITAL_L1)) {
+      lever.move_velocity(150);
+    } else {
+      lever.move_velocity(0);
     }
-    else if (master.get_digital(DIGITAL_DOWN)) {
+
+    // Other controls (unchanged, still exclusive)
+    if (master.get_digital(DIGITAL_DOWN)) {
       park.set_value(1);
-    }
-    else if (master.get_digital(DIGITAL_LEFT)) {
+    } else if (master.get_digital(DIGITAL_LEFT)) {
       park.set_value(0);
-    }
-    else if (master.get_digital(DIGITAL_UP)) {
+    } else if (master.get_digital(DIGITAL_UP)) {
       wings.set_value(1);
-    }
-    else if (master.get_digital(DIGITAL_RIGHT)) {
+    } else if (master.get_digital(DIGITAL_RIGHT)) {
       wings.set_value(0);
-    }
-    else if (master.get_digital(DIGITAL_B)) {
-      matchloaders.set_value(1);    
-    }
-    else if (master.get_digital(DIGITAL_A)) {
+    } else if (master.get_digital(DIGITAL_B)) {
+      matchloaders.set_value(1);
+    } else if (master.get_digital(DIGITAL_A)) {
       matchloaders.set_value(0);
-    }
-    else {
-      intake.move_velocity(0);  // Stop intake
-      lever.move_velocity(0);   // Stop lever
     }
    
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
