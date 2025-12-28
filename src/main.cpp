@@ -140,7 +140,11 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
-
+  //chassis.pid_drive_set(12_in, 110);
+  chassis.pid_turn_set(90_deg, 90);
+  chassis.pid_wait();
+  
+  printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
   /*
   //park auton
   chassis.pid_wait();
