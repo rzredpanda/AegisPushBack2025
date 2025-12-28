@@ -1,4 +1,6 @@
 #include "main.h"
+#include "main.cpp"
+
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -376,3 +378,40 @@ void measure_offsets() {
 // . . .
 // Make your own autonomous functions here!
 // . . .
+
+void testauton() {
+  chassis.initialize();
+  chassis.pid_targets_reset();                // Resets PID targets to 0
+  chassis.drive_imu_reset();                  // Reset gyro position to 0
+  chassis.drive_sensor_reset();               // Reset drive sensors to 0
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
+  matchloaders.set_value(0);
+
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait(); 
+
+  chassis.pid_turn_set(90_deg, 90);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(26_in, 110);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, 90);
+  chassis.pid_wait();
+
+  matchloaders.set_value(1);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait();
+
+  intake.move_velocity(200);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-48_in, 110);
+  chassis.pid_wait();
+  
+  lever.move_velocity(-150);
+  chassis.pid_wait();
+}
