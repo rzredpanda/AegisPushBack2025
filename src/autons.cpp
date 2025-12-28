@@ -1,5 +1,5 @@
 #include "main.h"
-#include "main.cpp"
+
 
 
 /////
@@ -379,6 +379,8 @@ void measure_offsets() {
 // Make your own autonomous functions here!
 // . . .
 
+/*
+
 void testauton() {
   chassis.initialize();
   chassis.pid_targets_reset();                // Resets PID targets to 0
@@ -415,3 +417,4 @@ void testauton() {
   lever.move_velocity(-150);
   chassis.pid_wait();
 }
+  */
