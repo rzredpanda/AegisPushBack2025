@@ -10,7 +10,7 @@ Collaborators:
 - Hilly Choe (@800026736-oss)
 - Aryan Talwar
 - Ellsa Ye
-- Minjun Gal
+- Minjun Gal (@Minfx-777)
 
 "holy our code team is big" -ryan
 
