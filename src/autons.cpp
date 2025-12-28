@@ -1,5 +1,5 @@
 #include "main.h"
-
+#include "main.cpp"
 
 
 /////
@@ -17,7 +17,7 @@ const int SWING_SPEED = 110;
 ///
 void default_constants() {
   // P, I, D, and Start I
-  chassis.pid_drive_constants_set(15.0, 0.0, 25);         // Fwd/rev constants, used for odom and non odom motions
+  chassis.pid_drive_constants_set(20.0, 0.0, 100.0);         // Fwd/rev constants, used for odom and non odom motions
   chassis.pid_heading_constants_set(11.0, 0.0, 20.0);        // Holds the robot straight while going forward without odom
   chassis.pid_turn_constants_set(3, 0.05, 20, 15.0);     // Turn in place constants was 3,0.05,20,15 before as default
   chassis.pid_swing_constants_set(6.0, 0.0, 65.0);           // Swing constants
@@ -379,8 +379,6 @@ void measure_offsets() {
 // Make your own autonomous functions here!
 // . . .
 
-/*
-
 void testauton() {
   chassis.initialize();
   chassis.pid_targets_reset();                // Resets PID targets to 0
@@ -390,7 +388,7 @@ void testauton() {
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
   matchloaders.set_value(0);
 
-  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_drive_set(20_in, 110);
   chassis.pid_wait(); 
 
   chassis.pid_turn_set(90_deg, 90);
@@ -417,4 +415,69 @@ void testauton() {
   lever.move_velocity(-150);
   chassis.pid_wait();
 }
-  */
+
+//auton1
+void auto1() {
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
+
+  matchloaders.set_value(0);
+  wings.set_value(0);
+
+  // Collect balls
+  intake.move_velocity(200);
+  chassis.pid_drive_set(40_in, 110);
+  chassis.pid_wait();
+
+  //  Align to goal 
+  chassis.pid_turn_set(90_deg, 90);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(20_in, 110);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(90_deg, 90); // total 180°
+  chassis.pid_wait();
+
+  // Drive to goal
+  chassis.pid_drive_set(18_in, 110);
+  chassis.pid_wait();
+
+  //  Position before scoring
+  pros::delay(100);
+
+  // Score 3 balls
+  lever.move_velocity(150);
+  pros::delay(350);
+  lever.move_velocity(-150);
+  pros::delay(350);
+  lever.move_velocity(0);
+
+  // Open match loader
+  matchloaders.set_value(1);
+  pros::delay(150);
+
+  // Reverse while intaking 
+  intake.move_velocity(200);
+  chassis.pid_drive_set(-38_in, 110);
+  chassis.pid_wait();
+
+  intake.move_velocity(0);
+  matchloaders.set_value(0);
+
+  // Reorient
+  chassis.pid_turn_set(-90_deg, 90);
+  chassis.pid_wait();
+
+  // (deploy wings during drive)
+  chassis.pid_drive_set(45_in, 110);
+  pros::delay(200);
+  wings.set_value(1);
+  chassis.pid_wait();
+
+  // reset for match
+  intake.move_velocity(0);
+  lever.move_velocity(0);
+}
