@@ -378,7 +378,7 @@ void measure_offsets() {
 // . . .
 // Make your own autonomous functions here!
 // . . .
-/*
+
 void testauton() {
   chassis.initialize();
   chassis.pid_targets_reset();                // Resets PID targets to 0
@@ -386,7 +386,7 @@ void testauton() {
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
-  matchloaders.set_value(0);
+  matchloaders.set(0);
 
   chassis.pid_drive_set(20_in, 110);
   chassis.pid_wait(); 
@@ -400,7 +400,7 @@ void testauton() {
   chassis.pid_turn_set(90_deg, 90);
   chassis.pid_wait();
 
-  matchloaders.set_value(1);
+  matchloaders.set(1);
   chassis.pid_wait();
 
   chassis.pid_drive_set(24_in, 110);
@@ -423,8 +423,8 @@ void auto1() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
 
-  matchloaders.set_value(0);
-  wings.set_value(0);
+  matchloaders.set(0);
+  wings.set(0);
 
   // Collect balls
   intake.move_velocity(200);
@@ -456,7 +456,7 @@ void auto1() {
   lever.move_velocity(0);
 
   // Open match loader
-  matchloaders.set_value(1);
+  matchloaders.set(1);
   pros::delay(150);
 
   // Reverse while intaking 
@@ -465,7 +465,7 @@ void auto1() {
   chassis.pid_wait();
 
   intake.move_velocity(0);
-  matchloaders.set_value(0);
+  matchloaders.set(0);
 
   // Reorient
   chassis.pid_turn_set(-90_deg, 90);
@@ -474,11 +474,10 @@ void auto1() {
   // (deploy wings during drive)
   chassis.pid_drive_set(45_in, 110);
   pros::delay(200);
-  wings.set_value(1);
+  wings.set(1);
   chassis.pid_wait();
 
   // reset for match
   intake.move_velocity(0);
   lever.move_velocity(0);
 }
-*/

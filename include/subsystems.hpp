@@ -10,9 +10,9 @@ extern Drive chassis;
 
 inline pros::Motor lever(11);
 inline pros::Motor intake(20);
-inline ez:Piston wings('d', false);
-inline ez:Piston park('b', false);
-inline ez:Piston matchloaders('c', false);
+inline ez::Piston wings('d', false);
+inline ez::Piston park('b', false);
+inline ez::Piston matchloaders('c', false);
 // inline pros::Motor intake(1);
 // inline pros::adi::DigitalIn limit_switch('A');
 
