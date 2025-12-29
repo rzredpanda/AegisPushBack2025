@@ -395,12 +395,10 @@ void opcontrol() {
     }
 
     // Lever control (hold for up/down, 0 if neither)
-    if (master.get_digital(DIGITAL_L2)) {
+    if (master.get_digital(DIGITAL_L1)) {
       lever.move_velocity(-150);
-    } else if (master.get_digital(DIGITAL_L1)) {
-      lever.move_velocity(150);
     } else {
-      lever.move_velocity(0);
+      lever.move_velocity(150);
     }
 
     // Other controls (unchanged, still exclusive)
