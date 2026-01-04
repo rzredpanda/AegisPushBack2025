@@ -17,7 +17,7 @@ const int SWING_SPEED = 110;
 ///
 void default_constants() {
   // P, I, D, and Start I
-  chassis.pid_drive_constants_set(20.0, 0.0, 100.0);         // Fwd/rev constants, used for odom and non odom motions
+  chassis.pid_drive_constants_set(7.5, 0.0, 9);         // Fwd/rev constants, used for odom and non odom motions
   chassis.pid_heading_constants_set(11.0, 0.0, 20.0);        // Holds the robot straight while going forward without odom
   chassis.pid_turn_constants_set(3, 0.05, 20, 15.0);     // Turn in place constants was 3,0.05,20,15 before as default
   chassis.pid_swing_constants_set(6.0, 0.0, 65.0);           // Swing constants
@@ -378,7 +378,7 @@ void measure_offsets() {
 // . . .
 // Make your own autonomous functions here!
 // . . .
-
+/*
 void testauton() {
   chassis.initialize();
   chassis.pid_targets_reset();                // Resets PID targets to 0
@@ -480,4 +480,74 @@ void auto1() {
   // reset for match
   intake.move_velocity(0);
   lever.move_velocity(0);
+}
+*/
+
+
+void red_right(){
+  //start 30 inches away from wall, touching black corner of parking zone
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
+  
+  chassis.pid_drive_set(2_in, 110);
+  chassis.pid_wait_quick_chain();           // Chain into turn
+  
+  chassis.pid_turn_set(-90_deg, 110);       // Turn to -90° absolute
+  chassis.pid_wait_quick_chain();           // Chain into drive
+  
+  chassis.pid_drive_set(28_in, 110, true);  // Slew enabled for longer drive
+  chassis.pid_wait_quick_chain();           // Chain into turn
+  
+  chassis.pid_turn_set(-180_deg, 110);      // Turn to -180° absolute
+  chassis.pid_wait_quick_chain();           // Chain into drive
+  
+  chassis.pid_drive_set(16_in, 110); 
+  chassis.pid_wait();
+  
+  intake.move_velocity(200);  // Start intake to grab balls
+  pros::delay(1000);
+  intake.move_velocity(0);    // Stop intake
+  chassis.pid_drive_set(-28_in, 110);        // Final drive
+  chassis.pid_wait();                       // LAST motion - full stop!
+}
+
+void red_right_sevenball(){
+  //going for 3 balls near middle then 3 from long goal + 1 preload
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
+
+
+  chassis.pid_drive_set(12.5_in, 110);
+  chassis.pid_wait_quick_chain();           // Chain into turn
+
+  chassis.pid_turn_set(-45_deg, 110);       // Turn to -90° absolute
+  chassis.pid_wait_quick_chain();           // Chain into drive
+
+  intake.move_velocity(200);  // Start intake to grab balls
+  chassis.pid_drive_set(8_in, 50, true);  // Slew enabled for longer drive
+  pros::delay(2000);          // Wait to intake balls
+  chassis.pid_wait();           // Chain into turn
+  intake.move_velocity(0);    // Stop intake
+
+  chassis.pid_turn_set(-135_deg, 110);      // Turn to -180° absolute
+  chassis.pid_wait_quick_chain();           // Chain into drive
+
+  chassis.pid_drive_set(29_in, 110); 
+  chassis.pid_wait_quick_chain();
+
+  chassis.pid_turn_set(-180_deg, 110);      // Turn to -180° absolute
+  chassis.pid_wait_quick_chain();           // Chain into drive
+
+  chassis.pid_drive_set(8_in, 110);
+  chassis.pid_wait();
+  intake.move_velocity(200);  // Start intake to grab balls
+  pros::delay(1000);
+  intake.move_velocity(0);    // Stop intake
+
+  chassis.pid_drive_set(-40_in, 110);        // Final drive
+  chassis.pid_wait();                       // LAST motion - full stop!
 }

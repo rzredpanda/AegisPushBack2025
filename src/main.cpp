@@ -69,9 +69,22 @@ void initialize() {
   // Set the drive to your own constants from autons.cpp!
   default_constants();
 
+  ez::as::auton_selector.autons_add({
+    //Auton("Autonomous 1\nDoes Something", testauton),
+    //Auton("Autonomous 2\nDoes Something Else", auto1),
+    Auton("Autonomous 1\nRed Right Corner, goes for matchloader then long goal.", red_right),
+    Auton("Autonomous 2\nRed Right Seven Ball.", red_right_sevenball),
+  });
+  ez::as::auton_selector.selected_auton_print(); 
+  pros::lcd::register_btn0_cb(ez::as::page_down);
+  pros::lcd::register_btn2_cb(ez::as::page_up);
+  //Auton("Autonomous 3\nDoes Something More", auto3),
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
   // chassis.opcontrol_curve_buttons_left_set(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
+  printf("Enabled? %i\n", ez::as::enabled()); // Returns false
+  ez::as::initialize();
+  printf("Enabled? %i\n", ez::as::enabled()); // Returns true
 
   // Autonomous Selector using LLEMU
   /*
@@ -133,80 +146,21 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-  chassis.initialize();
   chassis.pid_targets_reset();                // Resets PID targets to 0
   chassis.drive_imu_reset();                  // Reset gyro position to 0
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
+
+  ez::as::auton_selector.selected_auton_call(); 
   //chassis.pid_drive_set(12_in, 110);
-  chassis.pid_turn_set(90_deg, 90);
-  chassis.pid_wait();
-  
-  printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
-  /*
-  //park auton
-  chassis.pid_wait();
-  park.set_value(0);
-  chassis.pid_wait();
-  matchloaders.set_value(0);
-  chassis.pid_wait();
-  //matchloaders.set_value(1);
-  chassis.pid_wait();
-  chassis.pid_drive_set(-11_in, 120, true);
-  chassis.pid_wait();
-  pros::delay(200);
-  intake.move_velocity(-50);
-  pros::delay(350);
-  intake.move_velocity(0);
-  chassis.pid_wait();
-  matchloaders.set_value(1);
-  pros::delay(500);
-  park.set_value(1);
-  chassis.pid_wait();
-  chassis.pid_wait();
 
-
-  */
+  //chassis.pid_turn_set(90_deg, 90);
+  //chassis.pid_wait();
   
-
+  //printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
   
-  /*
-  Odometry and Pure Pursuit are not magic
-
-  It is possible to get perfectly consistent results without tracking wheels,
-  but it is also possible to have extremely inconsistent results without tracking wheels.
-  When you don't use tracking wheels, you need to:
-   - avoid wheel slip
-   - avoid wheelies
-   - avoid throwing momentum around (super harsh turns, like in the example below)
-  You can do cool curved motions, but you have to give your robot the best chance
-  to be consistent
-  */
-  //angular_PID_test();
-/*
-  printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
-  chassis.pid_turn_set(90_deg, 90);
-  printf("POSITION: %f, %f, %f\n", chassis.odom_x_get(), chassis.odom_y_get(), chassis.odom_theta_get());
-  */
-  /*
-  matchloaders.set_value(0);
-  chassis.pid_drive_set(20_in, 80, true);
-  pros::delay(500);
-  chassis.pid_drive_set(2_in, 80, true);
-  pros::delay(500);
-  chassis.pid_drive_set(-2_in, 80, true);
-  chassis.pid_drive_set(2_in, 80, true);
-  chassis.pid_wait();
-  long_goal.move_velocity(300);
-  pros::delay(400);
-  long_goal.move_velocity(0);
-  pros::delay(500);
-  chassis.pid_drive_set(-30_in, 50, true);
-  */
-  
-  //ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
 /*
 void ez_screen_task() {
@@ -353,27 +307,16 @@ void ez_template_extras() {
 void opcontrol() {
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   /**/
   // This is preference to what you like to drive on
-  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
-
+  chassis.drive_brake_set(MOTOR_BRAKE_COAST);
+  //chassis.pid_tuner_enable();
+  chassis.pid_tuner_print_brain_set(true);
+  chassis.pid_tuner_print_terminal_set(true);
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
-
-
+    
 
     //chassis.opcontrol_tank();  // Tank control
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
@@ -381,12 +324,21 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
-    // . . .
-    // Put more user control code here!
+/* PID tuner code
+    if (!pros::competition::is_connected()) { 
+      // Enable / Disable PID Tuner
+      if (master.get_digital_new_press(DIGITAL_X)) 
+        chassis.pid_tuner_toggle();
+        
+      // Trigger the selected autonomous routine
+      if (master.get_digital_new_press(DIGITAL_B)) 
+        autonomous();
 
+      //chassis.pid_tuner_iterate(); // Allow PID Tuner to iterate
+    } 
+*/
 
-    // Intake control (hold for forward/backward, 0 if neither)
-    if (master.get_digital(DIGITAL_R2)) {
+if (master.get_digital(DIGITAL_R2)) {
       intake.move_velocity(200);
     } else if (master.get_digital(DIGITAL_R1)) {
       intake.move_velocity(-200);
@@ -395,18 +347,18 @@ void opcontrol() {
     }
 
     // Lever control (hold for up/down, 0 if neither)
-    if (master.get_digital(DIGITAL_L1)) {
+    if (master.get_digital(DIGITAL_L2)) {
       lever.move_velocity(-150);
-    } else {
+    } else if (master.get_digital(DIGITAL_L1)) {
       lever.move_velocity(150);
+    } else {
+      lever.move_velocity(0);
     }
 
     // Other controls (unchanged, still exclusive)
     if (master.get_digital(DIGITAL_DOWN)) {
       park.set(1);
-    } else if (master.get_digital(DIGITAL_LEFT)) {
-      park.set(0);
-    } else if (master.get_digital(DIGITAL_UP)) {
+    }  else if (master.get_digital(DIGITAL_UP)) {
       wings.set(1);
     } else if (master.get_digital(DIGITAL_RIGHT)) {
       wings.set(0);
@@ -416,6 +368,10 @@ void opcontrol() {
       matchloaders.set(0);
     }
    
+
+
+
+
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
 
