@@ -269,8 +269,9 @@ void ez_template_extras() {
     //  When enabled:
     //  * use A and Y to increment / decrement the constants
     //  * use the arrow keys to navigate the constants
-    if (master.get_digital_new_press(DIGITAL_X))
-      chassis.pid_tuner_toggle();
+    // Disabled - X is now used for wings toggle
+    // if (master.get_digital_new_press(DIGITAL_X))
+    //   chassis.pid_tuner_toggle();
 
     // Trigger the selected autonomous routine
     if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) {
@@ -355,17 +356,20 @@ if (master.get_digital(DIGITAL_R2)) {
       lever.move_velocity(0);
     }
 
-    // Other controls (unchanged, still exclusive)
-    if (master.get_digital(DIGITAL_DOWN)) {
-      park.set(1);
-    }  else if (master.get_digital(DIGITAL_UP)) {
-      wings.set(1);
-    } else if (master.get_digital(DIGITAL_RIGHT)) {
-      wings.set(0);
-    } else if (master.get_digital(DIGITAL_B)) {
-      matchloaders.set(1);
-    } else if (master.get_digital(DIGITAL_A)) {
-      matchloaders.set(0);
+    // Toggle controls
+    // Matchloader toggle with B
+    if (master.get_digital_new_press(DIGITAL_B)) {
+      matchloaders.toggle();
+    }
+
+    // Wings toggle with X
+    if (master.get_digital_new_press(DIGITAL_X)) {
+      wings.toggle();
+    }
+
+    // Park (double part) toggle with DOWN
+    if (master.get_digital_new_press(DIGITAL_DOWN)) {
+      park.toggle();
     }
    
 
