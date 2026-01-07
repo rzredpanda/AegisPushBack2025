@@ -364,8 +364,8 @@ if (master.get_digital(DIGITAL_R2)) {
       matchloaders.set(matchloader_up);
     }
 
-    // Wings toggle with X (down=0, up=1)
-    if (master.get_digital_new_press(DIGITAL_X)) {
+    // Wings toggle with Y (down=0, up=1)
+    if (master.get_digital_new_press(DIGITAL_Y)) {
       wings_up = !wings_up;
       wings.set(wings_up);
     }
