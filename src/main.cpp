@@ -73,7 +73,7 @@ void initialize() {
     //Auton("Autonomous 1\nDoes Something", testauton),
     //Auton("Autonomous 2\nDoes Something Else", auto1),
     Auton("Autonomous 1\nRed Right Corner, goes for matchloader then long goal.", red_right),
-    Auton("Autonomous 2\nRed Right Seven Ball.", red_right_sevenball),
+    Auton("Autonomous 2\nRed Right Seven Ball.", red_right_sevenball), Auton("Autonomous 2\nSkills route.", skills),
   });
   ez::as::auton_selector.selected_auton_print(); 
   pros::lcd::register_btn0_cb(ez::as::page_down);
@@ -291,6 +291,58 @@ void ez_template_extras() {
 }
 
 /**
+ * Lever scoring macro - moves lever to 0.75 rotations (scoring position) then back to 0
+ * Can be called from opcontrol or autonomous
+ */
+void lever_score_macro() {
+  // Only execute if lever is at starting position (within margin of error: -1000 to 1000)
+  int current_pos = lever_rotation.get_position();
+  if (current_pos < -1000 || current_pos > 1000) {
+    return;  // Lever not at bottom position, abort macro
+  }
+
+  // Move lever to scoring position (0.75 rotations = 270 degrees = 27000 centidegrees)
+  lever.move_velocity(-200);
+  int last_pos = lever_rotation.get_position();
+  uint32_t last_change_time = pros::millis();
+
+  while (lever_rotation.get_position() < 27000) {
+    int new_pos = lever_rotation.get_position();
+    if (new_pos != last_pos) {
+      last_pos = new_pos;
+      last_change_time = pros::millis();
+    }
+    // If rotation hasn't changed for 300ms, assume stuck and abort
+    if (pros::millis() - last_change_time > 300) {
+      lever.move_velocity(0);
+      return;
+    }
+    pros::delay(10);
+  }
+  lever.move_velocity(0);
+  pros::delay(100);  // Brief pause at top
+
+  // Return lever to starting position (0)
+  lever.move_velocity(200);
+  uint32_t start_time = pros::millis();
+
+  while (lever_rotation.get_position() > 500) {  // Small threshold to account for sensor noise
+    // If above starting position (negative), reset to starting position and exit
+    if (lever_rotation.get_position() < 0) {
+      lever.move_velocity(0);
+      lever_rotation.reset_position();
+      return;
+    }
+    // If it takes more than 200ms, exit the loop
+    if (pros::millis() - start_time > 200) {
+      break;
+    }
+    pros::delay(10);
+  }
+  lever.move_velocity(0);
+}
+
+/**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
  * the Field Management System or the VEX Competition Switch in the operator
@@ -309,7 +361,8 @@ void opcontrol() {
   // State variables for toggles
   bool wings_up = false;
   bool matchloader_up = false;
-
+  //chassis.opcontrol_drive_activebrake_set(2.0);
+  chassis.opcontrol_joystick_practicemode_toggle(false);
   /**/
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
@@ -369,9 +422,14 @@ if (master.get_digital(DIGITAL_R2)) {
       wings_up = !wings_up;
       wings.set(wings_up);
     }
+    if (master.get_digital_new_press(DIGITAL_A)) {
+      autonomous();
+    }
 
-
-
+    // Lever macro - press UP to score
+    if (master.get_digital_new_press(DIGITAL_UP)) {
+      lever_score_macro();
+    }
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
