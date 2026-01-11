@@ -73,7 +73,7 @@ void initialize() {
     //Auton("Autonomous 1\nDoes Something", testauton),
     //Auton("Autonomous 2\nDoes Something Else", auto1),
     Auton("Autonomous 1\nRed Right Corner, goes for matchloader then long goal.", red_right),
-    Auton("Autonomous 2\nRed Right Seven Ball.", red_right_sevenball), Auton("Autonomous 2\nSkills route.", skills),
+    Auton("Autonomous 2\nRed Right Seven Ball.", red_right_sevenball), Auton("Autonomous 3\nRed Right One Ball.", oneball), Auton("Autonomous 4\nRed leftside.", red_left_sevenball)
   });
   ez::as::auton_selector.selected_auton_print(); 
   pros::lcd::register_btn0_cb(ez::as::page_down);
@@ -295,14 +295,17 @@ void ez_template_extras() {
  * Can be called from opcontrol or autonomous
  */
 void lever_score_macro() {
-  // Only execute if lever is at starting position (within margin of error: -1000 to 1000)
+  // Only execute if lever is at starting position
+  // Handles wraparound: 0-2 degrees (0-200 centidegrees) OR 340-360 degrees (34000-36000 centidegrees)
   int current_pos = lever_rotation.get_position();
-  if (current_pos < -1000 || current_pos > 1000) {
+  bool near_zero = (current_pos >= -1000 && current_pos <= 1000);
+  bool near_360 = (current_pos >= 34000 && current_pos <= 36000);
+  if (!near_zero && !near_360) {
     return;  // Lever not at bottom position, abort macro
   }
 
   // Move lever to scoring position (0.75 rotations = 270 degrees = 27000 centidegrees)
-  lever.move_velocity(-200);
+  lever.move_velocity(-120);
   int last_pos = lever_rotation.get_position();
   uint32_t last_change_time = pros::millis();
 
@@ -323,7 +326,7 @@ void lever_score_macro() {
   pros::delay(100);  // Brief pause at top
 
   // Return lever to starting position (0)
-  lever.move_velocity(200);
+  lever.move_velocity(100);
   uint32_t start_time = pros::millis();
 
   while (lever_rotation.get_position() > 500) {  // Small threshold to account for sensor noise
@@ -361,9 +364,10 @@ void opcontrol() {
   // State variables for toggles
   bool wings_up = false;
   bool matchloader_up = false;
-  //chassis.opcontrol_drive_activebrake_set(2.0);
+  chassis.opcontrol_drive_activebrake_set(2.0);
   chassis.opcontrol_joystick_practicemode_toggle(false);
   /**/
+  lever_rotation.reset_position(); 
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
   //chassis.pid_tuner_enable();
@@ -430,7 +434,11 @@ if (master.get_digital(DIGITAL_R2)) {
     if (master.get_digital_new_press(DIGITAL_UP)) {
       lever_score_macro();
     }
+    
 
+    if (master.get_digital(DIGITAL_DOWN)){
+      park.set(1);
+    }
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
 

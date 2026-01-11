@@ -13,6 +13,10 @@ inline pros::Motor intake(20);
 inline ez::Piston wings('d', false);
 inline ez::Piston park('b', false);
 inline ez::Piston matchloaders('c', false);
+inline pros::Rotation lever_rotation(7);  // Rotation sensor for lever position tracking
+
+// Lever scoring macro function - moves lever to scoring position and back
+void lever_score_macro();
 // inline pros::Motor intake(1);
 // inline pros::adi::DigitalIn limit_switch('A');
 

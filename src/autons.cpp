@@ -517,37 +517,166 @@ void red_right_sevenball(){
   //going for 3 balls near middle then 3 from long goal + 1 preload
   chassis.pid_targets_reset();
   chassis.drive_sensor_reset();
+  lever_rotation.reset_position();  // Reset lever sensor so macro works
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
 
 
-  chassis.pid_drive_set(12.5_in, 110);
+  chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait_quick_chain();           // Chain into turn
 
-  chassis.pid_turn_set(-45_deg, 110);       // Turn to -90° absolute
+  chassis.pid_turn_set(-90_deg, 110);       // Turn to -90° absolute
+  pros::delay(250); 
   chassis.pid_wait_quick_chain();           // Chain into drive
+  matchloaders.set(1);                     // Ensure matchloader is down    
+  
+  
+  
+  // Small delay for pneumatics
+  intake.move_velocity(250);
+  chassis.pid_drive_set(22_in, 80, true);  // Slew enabled for longer drive
+  chassis.pid_wait();                       // Wait to arrive at position
+  //intake.move_velocity(200);               // Start intake to grab balls
+  intake.move_velocity(250);
+  pros::delay(1500);                       // Stay for 2 seconds with intake running
+  intake.move_velocity(250);
+  chassis.pid_drive_set(-32_in, 90);      // Drive back (intake still running)
+  chassis.pid_wait();
+  intake.move_velocity(250);
+  chassis.pid_wait();
+  pros::delay(100);
+  chassis.pid_wait();
+  lever.move_velocity(-150);
+  chassis.pid_wait();
+  pros::delay(100);
+  chassis.pid_wait();
+  intake.move_velocity(250);
+  chassis.pid_wait();
+  pros::delay(2000);
+  chassis.pid_wait();
+  lever_score_macro();  
+  chassis.pid_wait();
+  pros::delay(1000);
+  intake.move_velocity(0);                   // Score preload + 3 balls (intake still running)
+  //intake.move_velocity(0);                 // Stop intake after macro
 
-  intake.move_velocity(200);  // Start intake to grab balls
-  chassis.pid_drive_set(8_in, 50, true);  // Slew enabled for longer drive
-  pros::delay(2000);          // Wait to intake balls
-  chassis.pid_wait();           // Chain into turn
-  intake.move_velocity(0);    // Stop intake
-
-  chassis.pid_turn_set(-135_deg, 110);      // Turn to -180° absolute
-  chassis.pid_wait_quick_chain();           // Chain into drive
-
-  chassis.pid_drive_set(29_in, 110); 
+  
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  matchloaders.set(0);
+  //lever_rotation.reset_position();  // Reset lever sensor so macro works
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.pid_drive_set(7_in,110);//5 inches
+  chassis.pid_wait_quick_chain();           // Chain into turn
+  chassis.pid_turn_set(45_deg,110);
   chassis.pid_wait_quick_chain();
 
-  chassis.pid_turn_set(-180_deg, 110);      // Turn to -180° absolute
-  chassis.pid_wait_quick_chain();           // Chain into drive
-
-  chassis.pid_drive_set(8_in, 110);
+  chassis.pid_drive_set(-7_in,110);//-2
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(0_deg,110);
+  wings.set(1);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-18_in,110);
   chassis.pid_wait();
-  intake.move_velocity(200);  // Start intake to grab balls
-  pros::delay(1000);
-  intake.move_velocity(0);    // Stop intake
+  }
 
-  chassis.pid_drive_set(-40_in, 110);        // Final drive
-  chassis.pid_wait();                       // LAST motion - full stop!
+
+
+
+void oneball(){
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  lever_rotation.reset_position();  // Reset lever sensor so macro works
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
+
+
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait_quick_chain();           // Chain into turn
+
+  chassis.pid_turn_set(-90_deg, 110);  
+  chassis.pid_wait_quick_chain();           // Chain into drive 
+  chassis.pid_drive_set(-32_in, 110); 
+  chassis.pid_wait_quick_chain();
+
+  intake.move_velocity(200);
+  lever_score_macro();
+  pros::delay(1000);
+  intake.move_velocity(0);
 }
+
+void red_left_sevenball(){
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  lever_rotation.reset_position();  // Reset lever sensor so macro works
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
+  
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait_quick_chain();           // Chain into turn
+
+  chassis.pid_turn_set(90_deg, 110);       // Turn to -90° absolute
+  pros::delay(250); 
+  chassis.pid_wait_quick_chain();           // Chain into drive
+  matchloaders.set(1);                     // Ensure matchloader is down    
+  
+  
+  
+  // Small delay for pneumatics
+  chassis.pid_drive_set(20_in, 75, true);  // Slew enabled for longer drive
+  chassis.pid_wait();                       // Wait to arrive at position
+  intake.move_velocity(200);               // Start intake to grab balls
+  pros::delay(1500);                       // Stay for 2 seconds with intake running
+  
+  chassis.pid_drive_set(-32_in, 75);      // Drive back (intake still running)
+  chassis.pid_wait();
+  lever_score_macro();  
+  pros::delay(1000);                   // Score preload + 3 balls (intake still running)
+  //intake.move_velocity(0);                 // Stop intake after macro
+}  
+
+
+
+/*
+void skills_route() {
+  //same as red_right_seven_ball
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  lever_rotation.reset_position();  // Reset lever sensor so macro works
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
+
+  chassis.pid_drive_set(24_in);
+  chassis.pid_wait_quick_chain();
+
+  chassis.pid_turn_set(-90_deg, 110);
+  pros::delay(250);
+  chassis.pid_wait_quick_chain();
+  matchloaders.set(1);
+
+  //Small delay for pneumatics
+  chassis.pid_drive_set(20_in, 110, true);
+  chassis.pid_wait();
+  intake.move_velocity(200);
+  pros::delay(1500);
+
+  chassis.pid_drive_set(-32_in, 110);
+  chassis.pid_wait();
+  lever_score_macro();
+  pros::delay(1000);
+
+  
+  //score other long goal
+  chassis.pid_drive_set(12_in, 110, true);
+  chassis.pid_wait_quick_chain();
+  
+  chassis.pid_turn_set(-90_deg, 110);
+  pros::delay(250);
+  chassis.pid_wait_quick_chain();
+  
+}
+
+
+
+void 
+*/

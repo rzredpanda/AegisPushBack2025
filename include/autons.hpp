@@ -21,3 +21,6 @@ void measure_offsets();
 //void auto1();
 void red_right();
 void red_right_sevenball();
+void oneball();
+void red_left_sevenball();
+//void skills_route();
