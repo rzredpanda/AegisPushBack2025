@@ -153,8 +153,12 @@ void autonomous() {
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
 
-  ez::as::auton_selector.selected_auton_call(); 
-  //chassis.pid_drive_set(12_in, 110);
+  //ez::as::auton_selector.selected_auton_call(); 
+
+
+
+
+  chassis.pid_drive_set(12_in, 110);
 
   //chassis.pid_turn_set(90_deg, 90);
   //chassis.pid_wait();
@@ -384,7 +388,7 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
-/* PID tuner code
+// PID tuner code
     if (!pros::competition::is_connected()) { 
       // Enable / Disable PID Tuner
       if (master.get_digital_new_press(DIGITAL_X)) 
@@ -396,7 +400,7 @@ void opcontrol() {
 
       //chassis.pid_tuner_iterate(); // Allow PID Tuner to iterate
     } 
-*/
+
 
 if (master.get_digital(DIGITAL_R2)) {
       intake.move_velocity(200);
