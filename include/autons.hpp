@@ -23,4 +23,4 @@ void red_right();
 void red_right_sevenball();
 void oneball();
 void red_left_sevenball();
-//void skills_route();
+void skills_route();

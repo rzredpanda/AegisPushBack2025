@@ -73,7 +73,9 @@ void initialize() {
     //Auton("Autonomous 1\nDoes Something", testauton),
     //Auton("Autonomous 2\nDoes Something Else", auto1),
     Auton("Autonomous 1\nRed Right Corner, goes for matchloader then long goal.", red_right),
-    Auton("Autonomous 2\nRed Right Seven Ball.", red_right_sevenball), Auton("Autonomous 3\nRed Right One Ball.", oneball), Auton("Autonomous 4\nRed leftside.", red_left_sevenball)
+    Auton("Autonomous 2\nRed Right Seven Ball.", red_right_sevenball), Auton("Autonomous 3\nRed Right One Ball.", oneball), Auton("Autonomous 4\nRed leftside.", red_left_sevenball), 
+    Auton("Autonomous 5\nSkills Route.", skills_route)
+    
   });
   ez::as::auton_selector.selected_auton_print(); 
   pros::lcd::register_btn0_cb(ez::as::page_down);
@@ -158,7 +160,7 @@ void autonomous() {
 
 
 
-  chassis.pid_drive_set(12_in, 110);
+  chassis.pid_drive_set(24_in, 110);
 
   //chassis.pid_turn_set(90_deg, 90);
   //chassis.pid_wait();
@@ -368,13 +370,13 @@ void opcontrol() {
   // State variables for toggles
   bool wings_up = false;
   bool matchloader_up = false;
-  chassis.opcontrol_drive_activebrake_set(2.0);
+  //chassis.opcontrol_drive_activebrake_set(2.0);
   chassis.opcontrol_joystick_practicemode_toggle(false);
   /**/
   lever_rotation.reset_position(); 
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
-  //chassis.pid_tuner_enable();
+  chassis.pid_tuner_enable();
   chassis.pid_tuner_print_brain_set(true);
   chassis.pid_tuner_print_terminal_set(true);
   while (true) {
@@ -389,6 +391,7 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
 // PID tuner code
+
     if (!pros::competition::is_connected()) { 
       // Enable / Disable PID Tuner
       if (master.get_digital_new_press(DIGITAL_X)) 
@@ -398,7 +401,7 @@ void opcontrol() {
       if (master.get_digital_new_press(DIGITAL_B)) 
         autonomous();
 
-      //chassis.pid_tuner_iterate(); // Allow PID Tuner to iterate
+      chassis.pid_tuner_iterate(); // Allow PID Tuner to iterate
     } 
 
 
@@ -409,7 +412,7 @@ if (master.get_digital(DIGITAL_R2)) {
     } else {
       intake.move_velocity(0);
     }
-
+/*
     // Lever control (hold for up/down, 0 if neither)
     if (master.get_digital(DIGITAL_L2)) {
       lever.move_velocity(-150);
@@ -419,6 +422,8 @@ if (master.get_digital(DIGITAL_R2)) {
       lever.move_velocity(0);
     }
 
+
+    
     // Matchloader toggle with B (down=0, up=1)
     if (master.get_digital_new_press(DIGITAL_B)) {
       matchloader_up = !matchloader_up;
@@ -433,16 +438,18 @@ if (master.get_digital(DIGITAL_R2)) {
     if (master.get_digital_new_press(DIGITAL_A)) {
       autonomous();
     }
+    
 
     // Lever macro - press UP to score
     if (master.get_digital_new_press(DIGITAL_UP)) {
       lever_score_macro();
     }
     
-
+/*
     if (master.get_digital(DIGITAL_DOWN)){
       park.set(1);
     }
+*/
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
 
