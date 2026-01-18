@@ -17,7 +17,7 @@ const int SWING_SPEED = 110;
 ///
 void default_constants() {
   // P, I, D, and Start I
-  chassis.pid_drive_constants_set(7.5, 0.0, 9);         // Fwd/rev constants, used for odom and non odom motions
+  chassis.pid_drive_constants_set(7, 0.0, 10.75);         // Fwd/rev constants, used for odom and non odom motions
   chassis.pid_heading_constants_set(11.0, 0.0, 20.0);        // Holds the robot straight while going forward without odom
   chassis.pid_turn_constants_set(3, 0.05, 20, 15.0);     // Turn in place constants was 3,0.05,20,15 before as default
   chassis.pid_swing_constants_set(6.0, 0.0, 65.0);           // Swing constants
@@ -638,55 +638,125 @@ void skills_route() {
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
 
 
-  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_drive_set(30_in, 110);
   chassis.pid_wait();           // Chain into turn
 
   chassis.pid_turn_set(-90_deg, 110);       // Turn to -90° absolute
   pros::delay(250); 
   chassis.pid_wait();          // Chain into drive
   matchloaders.set(1);                     // Ensure matchloader is down    
-  
+  pros::delay(200);
   
   
   // Small delay for pneumatics
   intake.move_velocity(250);
-  chassis.pid_drive_set(14_in, 80, true);  // Slew enabled for longer drive
+  chassis.pid_drive_set(14_in, 70, true);  // Slew enabled for longer drive
   chassis.pid_wait();                       // Wait to arrive at position
-  //intake.move_velocity(200);               // Start intake to grab balls
-  //intake.move_velocity(250);
   pros::delay(1500);                       // Stay for 2 seconds with intake running
-  //intake.move_velocity(250);
-  chassis.pid_drive_set(-32_in, 90);      // Drive back (intake still running)
-  //chassis.pid_wait();
-  //intake.move_velocity(250);
-  chassis.pid_wait();
-  
-  //lever.move_velocity(-150);
-  chassis.pid_wait();
-  pros::delay(100);;
-  chassis.pid_wait();
-  //lever_score_macro();  
+  intake.move_velocity(0);
   chassis.pid_wait();
   pros::delay(1000);
-  intake.move_velocity(0);                   // Score preload + 3 balls (intake still running)
-  //intake.move_velocity(0);                 // Stop intake after macro
 
-  
+
+
+  //RESET 1
   chassis.pid_targets_reset();
   chassis.drive_sensor_reset();
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);
-  matchloaders.set(0);
   lever_rotation.reset_position();  // Reset lever sensor so macro works
 
-  //tries to go for other long goal
-  chassis.pid_drive_set(10_in, 110, true);
+
+  /**/
+  //goes for matchloader again
+  chassis.pid_drive_set(-10_in, 110, true);
   chassis.pid_wait();
+  matchloaders.set(0);
+  chassis.pid_wait();
+  intake.move_velocity(250);
+  chassis.pid_wait();
+  chassis.pid_drive_set(10_in, 50, true);
+  pros::delay(250);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-10_in, 110, true);
+  chassis.pid_wait();
+
+
+  //CROSSING LONG GOAL
   chassis.pid_turn_set(-45_deg, 110);
   chassis.pid_wait();
-  chassis.pid_drive_set(-12_in, 110, true);
+  chassis.pid_drive_set(-21_in, 80, true);
   chassis.pid_wait();
   chassis.pid_turn_set(0_deg, 110);
   chassis.pid_wait();  
+  chassis.pid_drive_set(-78_in, 110, true);
+  chassis.pid_wait();
+//FINISHED CROSSING LONG GOAL
+
+
+
+  //scores long goal
+  chassis.pid_turn_set(-90_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(10_in, 110, true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-180_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-20_in, 110, true);
+  //LONG GOAL ^^
+
+  //scores balls
+  chassis.pid_wait();
+  intake.move_velocity(250);
+  chassis.pid_wait();
+  pros::delay(100);
+  chassis.pid_wait();
+  lever_score_macro();  
+  chassis.pid_wait();
+  pros::delay(500);
+  intake.move_velocity(0);
+
+
+  //RESET 2
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  intake.move_velocity(200);
+  matchloaders.set(1);
+  chassis.pid_wait();
+  intake.move_velocity(250);
+  chassis.pid_drive_set(30_in, 65, true);
+  pros::delay(1000);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-10_in, 110, true);
+  matchloaders.set(0);
+  chassis.pid_wait();
+  chassis.pid_drive_set(10_in,40,true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-36_in,110,true);
+  intake.move_velocity(0);
+  chassis.pid_wait();
+
+  
+/*
+  //scores long goal again
+  chassis.pid_drive_set(30_in, 70, true);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-32_in, 110, true);
+  chassis.pid_wait();
+  intake.move_velocity(250);
+  chassis.pid_wait();
+  lever.move_velocity(-150);
+  chassis.pid_wait();
+  lever_score_macro();  
+  chassis.pid_wait();
+  pros::delay(500);
+  intake.move_velocity(0);                   // Score preload + 3 balls (intake still running)
+  chassis.pid_wait();  
+
+  matchloaders.set(0);
+  */
 }
 
 

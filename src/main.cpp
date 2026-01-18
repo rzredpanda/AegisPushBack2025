@@ -155,12 +155,12 @@ void autonomous() {
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
 
-  //ez::as::auton_selector.selected_auton_call(); 
+  ez::as::auton_selector.selected_auton_call(); 
 
 
 
 
-  chassis.pid_drive_set(24_in, 110);
+  //chassis.pid_drive_set(24_in, 110);
 
   //chassis.pid_turn_set(90_deg, 90);
   //chassis.pid_wait();
@@ -311,7 +311,7 @@ void lever_score_macro() {
   }
 
   // Move lever to scoring position (0.75 rotations = 270 degrees = 27000 centidegrees)
-  lever.move_velocity(-120);
+  lever.move_velocity(120);
   int last_pos = lever_rotation.get_position();
   uint32_t last_change_time = pros::millis();
 
@@ -332,7 +332,7 @@ void lever_score_macro() {
   pros::delay(100);  // Brief pause at top
 
   // Return lever to starting position (0)
-  lever.move_velocity(100);
+  lever.move_velocity(-100);
   uint32_t start_time = pros::millis();
 
   while (lever_rotation.get_position() > 500) {  // Small threshold to account for sensor noise
@@ -391,7 +391,7 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
 // PID tuner code
-
+/*
     if (!pros::competition::is_connected()) { 
       // Enable / Disable PID Tuner
       if (master.get_digital_new_press(DIGITAL_X)) 
@@ -403,7 +403,7 @@ void opcontrol() {
 
       chassis.pid_tuner_iterate(); // Allow PID Tuner to iterate
     } 
-
+*/
 
 if (master.get_digital(DIGITAL_R2)) {
       intake.move_velocity(200);
@@ -412,7 +412,7 @@ if (master.get_digital(DIGITAL_R2)) {
     } else {
       intake.move_velocity(0);
     }
-/*
+
     // Lever control (hold for up/down, 0 if neither)
     if (master.get_digital(DIGITAL_L2)) {
       lever.move_velocity(-150);
@@ -445,11 +445,11 @@ if (master.get_digital(DIGITAL_R2)) {
       lever_score_macro();
     }
     
-/*
+
     if (master.get_digital(DIGITAL_DOWN)){
       park.set(1);
     }
-*/
+
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
 
