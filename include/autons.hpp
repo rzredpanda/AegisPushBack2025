@@ -19,7 +19,7 @@ void measure_offsets();
 
 //void testauton();
 //void auto1();
-void red_right();
+void pid_test();
 void red_right_sevenball();
 void oneball();
 void red_left_sevenball();

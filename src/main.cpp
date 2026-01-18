@@ -72,7 +72,7 @@ void initialize() {
   ez::as::auton_selector.autons_add({
     //Auton("Autonomous 1\nDoes Something", testauton),
     //Auton("Autonomous 2\nDoes Something Else", auto1),
-    Auton("Autonomous 1\nRed Right Corner, goes for matchloader then long goal.", red_right),
+    Auton("Autonomous 1\nRed Right Corner, goes for matchloader then long goal.", pid_test),
     Auton("Autonomous 2\nRed Right Seven Ball.", red_right_sevenball), Auton("Autonomous 3\nRed Right One Ball.", oneball), Auton("Autonomous 4\nRed leftside.", red_left_sevenball), 
     Auton("Autonomous 5\nSkills Route.", skills_route)
     

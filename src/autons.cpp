@@ -484,33 +484,15 @@ void auto1() {
 */
 
 
-void red_right(){
+void pid_test(){
   //start 30 inches away from wall, touching black corner of parking zone
   chassis.pid_targets_reset();
   chassis.drive_sensor_reset();
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
   
-  chassis.pid_drive_set(2_in, 110);
-  chassis.pid_wait_quick_chain();           // Chain into turn
-  
-  chassis.pid_turn_set(-90_deg, 110);       // Turn to -90° absolute
-  chassis.pid_wait_quick_chain();           // Chain into drive
-  
-  chassis.pid_drive_set(28_in, 110, true);  // Slew enabled for longer drive
-  chassis.pid_wait_quick_chain();           // Chain into turn
-  
-  chassis.pid_turn_set(-180_deg, 110);      // Turn to -180° absolute
-  chassis.pid_wait_quick_chain();           // Chain into drive
-  
-  chassis.pid_drive_set(16_in, 110); 
-  chassis.pid_wait();
-  
-  intake.move_velocity(200);  // Start intake to grab balls
-  pros::delay(1000);
-  intake.move_velocity(0);    // Stop intake
-  chassis.pid_drive_set(-28_in, 110);        // Final drive
-  chassis.pid_wait();                       // LAST motion - full stop!
+  chassis.pid_drive_set(24_in, 110,true);  
+  chassis.pid_wait();                 // LAST motion - full stop!
 }
 
 void red_right_sevenball(){
@@ -733,6 +715,37 @@ void skills_route() {
   chassis.pid_drive_set(10_in,40,true);
   chassis.pid_wait();
   chassis.pid_drive_set(-36_in,110,true);
+  chassis.pid_wait();
+  lever_score_macro();
+  pros::delay(500);
+  chassis.pid_wait();
+  intake.move_velocity(0);
+  chassis.pid_wait();
+
+
+  //RESET 3
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  intake.move_velocity(0);
+  chassis.pid_drive_set(18_in, 110, true);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(135_deg, 110);
+  intake.move_velocity(250);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(28_in, 110, true);
+  intake.move_velocity(250);
+  chassis.pid_wait();
+  matchloaders.set(1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(12_in, 40, true);
+  chassis.pid_wait();
+  matchloaders.set(0);
+  chassis.pid_wait();
+  chassis.pid_drive_set(12_in, 110, true);
+  chassis.pid_wait();
+  intake.move_velocity(-250);
+  pros::delay(500);
   intake.move_velocity(0);
   chassis.pid_wait();
 
