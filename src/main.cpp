@@ -301,53 +301,15 @@ void ez_template_extras() {
  * Can be called from opcontrol or autonomous
  */
 void lever_score_macro() {
-  // Only execute if lever is at starting position
-  // Handles wraparound: 0-2 degrees (0-200 centidegrees) OR 340-360 degrees (34000-36000 centidegrees)
-  int current_pos = lever_rotation.get_position();
-  bool near_zero = (current_pos >= -1000 && current_pos <= 1000);
-  bool near_360 = (current_pos >= 34000 && current_pos <= 36000);
-  if (!near_zero && !near_360) {
-    return;  // Lever not at bottom position, abort macro
-  }
-
-  // Move lever to scoring position (0.75 rotations = 270 degrees = 27000 centidegrees)
+  // Move lever up
   lever.move_velocity(120);
-  int last_pos = lever_rotation.get_position();
-  uint32_t last_change_time = pros::millis();
-
-  while (lever_rotation.get_position() < 27000) {
-    int new_pos = lever_rotation.get_position();
-    if (new_pos != last_pos) {
-      last_pos = new_pos;
-      last_change_time = pros::millis();
-    }
-    // If rotation hasn't changed for 300ms, assume stuck and abort
-    if (pros::millis() - last_change_time > 300) {
-      lever.move_velocity(0);
-      return;
-    }
-    pros::delay(10);
-  }
+  pros::delay(400);
   lever.move_velocity(0);
-  pros::delay(100);  // Brief pause at top
+  pros::delay(150);  // Brief pause at top
 
-  // Return lever to starting position (0)
+  // Return lever down
   lever.move_velocity(-100);
-  uint32_t start_time = pros::millis();
-
-  while (lever_rotation.get_position() > 500) {  // Small threshold to account for sensor noise
-    // If above starting position (negative), reset to starting position and exit
-    if (lever_rotation.get_position() < 0) {
-      lever.move_velocity(0);
-      lever_rotation.reset_position();
-      return;
-    }
-    // If it takes more than 200ms, exit the loop
-    if (pros::millis() - start_time > 200) {
-      break;
-    }
-    pros::delay(10);
-  }
+  pros::delay(200);
   lever.move_velocity(0);
 }
 
@@ -376,8 +338,8 @@ void opcontrol() {
   lever_rotation.reset_position(); 
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
-  chassis.pid_tuner_enable();
-  chassis.pid_tuner_print_brain_set(true);
+  //chassis.pid_tuner_enable();
+  //chassis.pid_tuner_print_brain_set(true);
   chassis.pid_tuner_print_terminal_set(true);
   while (true) {
     // Gives you some extras to make EZ-Template ezier
