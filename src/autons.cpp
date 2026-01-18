@@ -554,8 +554,6 @@ void red_right_sevenball(){
   }
 
 
-
-
 void oneball(){
   chassis.pid_targets_reset();
   chassis.drive_sensor_reset();
@@ -634,7 +632,7 @@ void skills_route() {
   intake.move_velocity(250);
   chassis.pid_drive_set(14_in, 70, true);  // Slew enabled for longer drive
   chassis.pid_wait();                       // Wait to arrive at position
-  pros::delay(1500);                       // Stay for 2 seconds with intake running
+  pros::delay(2000);                       // Stay for 2 seconds with intake running
   intake.move_velocity(0);
   chassis.pid_wait();
   pros::delay(1000);
@@ -642,11 +640,12 @@ void skills_route() {
 
 
   //RESET 1
+  /*
   chassis.pid_targets_reset();
   chassis.drive_sensor_reset();
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);
   lever_rotation.reset_position();  // Reset lever sensor so macro works
-
+*/
 
   /**/
   //goes for matchloader again
@@ -663,27 +662,33 @@ void skills_route() {
   chassis.pid_wait();
 
 
+  
   //CROSSING LONG GOAL
-  chassis.pid_turn_set(-45_deg, 110);
+ // chassis.pid_turn_set(-45_deg, 110);
+  chassis.pid_turn_set(-135_deg, 110);
   chassis.pid_wait();
   chassis.pid_drive_set(-21_in, 80, true);
+
+//-21
+
   chassis.pid_wait();
-  chassis.pid_turn_set(0_deg, 110);
+  //chassis.pid_turn_set(0_deg, 110);
+  chassis.pid_turn_set(-90_deg, 110);
   chassis.pid_wait();  
-  chassis.pid_drive_set(-78_in, 110, true);
+  chassis.pid_drive_set(-78_in, 70, true);
   chassis.pid_wait();
 //FINISHED CROSSING LONG GOAL
 
 
 
   //scores long goal
-  chassis.pid_turn_set(-90_deg, 110);
+  chassis.pid_turn_set(0_deg, 110);
   chassis.pid_wait();
-  chassis.pid_drive_set(10_in, 110, true);
+  chassis.pid_drive_set(-12_in, 110, true);
   chassis.pid_wait();
-  chassis.pid_turn_set(-180_deg, 110);
+  chassis.pid_turn_set(90_deg, 110);
   chassis.pid_wait();
-  chassis.pid_drive_set(-20_in, 110, true);
+  chassis.pid_drive_set(-24_in, 110, true);
   //LONG GOAL ^^
 
   //scores balls
@@ -707,28 +712,29 @@ void skills_route() {
   chassis.pid_wait();
   intake.move_velocity(250);
   chassis.pid_drive_set(30_in, 65, true);
-  pros::delay(1000);
+  pros::delay(2000);
   chassis.pid_wait();
   chassis.pid_drive_set(-10_in, 110, true);
   matchloaders.set(0);
   chassis.pid_wait();
   chassis.pid_drive_set(10_in,40,true);
   chassis.pid_wait();
+  pros::delay(500);
   chassis.pid_drive_set(-36_in,110,true);
   chassis.pid_wait();
-  lever_score_macro();
+  //lever_score_macro();
   pros::delay(500);
   chassis.pid_wait();
   intake.move_velocity(0);
   chassis.pid_wait();
 
 
-  //RESET 3
+  //RESET 3, go for mid goal
   chassis.pid_targets_reset();
   chassis.drive_sensor_reset();
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);
   intake.move_velocity(0);
-  chassis.pid_drive_set(18_in, 110, true);
+  chassis.pid_drive_set(10_in, 110, true);
   chassis.pid_wait_quick_chain();
   chassis.pid_turn_set(135_deg, 110);
   intake.move_velocity(250);
@@ -772,5 +778,57 @@ void skills_route() {
   */
 }
 
+void SAWP() {
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
 
+  chassis.pid_drive_set(2_in, 100,true);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(-90_deg, 100);
+  chassis.pid_wait_quick_chain();
+  intake.move_velocity(250);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_drive_set(20_in, 60,true);
+  chassis.pid_wait_quick_chain();
+  matchloaders.set(1);
+  pros::delay(500);
+  
+  //move forward to align to mid goal
+  chassis.pid_drive_set(4_in, 50,true);
+  chassis.pid_wait();
+  matchloaders.set(0);
+  chassis.pid_wait();
 
+  //scoring mid goal
+  chassis.pid_turn_set(-135_deg, 110);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(13_in, 60, true);
+  chassis.pid_wait();
+  intake.move_velocity(0); 
+  pros::delay(250);
+  intake.move_velocity(-250);
+  pros::delay(1000);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-3_in, 100, true);
+  chassis.pid_wait();
+  intake.move_velocity(-250);
+  pros::delay(1000);
+  chassis.pid_drive_set(14_in, 70, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-3_in, 80, true);
+
+  //backing out after scoring mid goal
+  chassis.pid_targets_reset();
+  chassis.drive_sensor_reset();
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+
+  chassis.pid_drive_set(-21_in, 80, true);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-21_in, 80, true);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(-135_deg, 80);
+  chassis.pid_wait_quick_chain();
+}
